@@ -1,3 +1,4 @@
+import 'package:exampleapi/widgets/ColorExtension.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -16,20 +17,18 @@ class _ExamplescreensState extends State<Examplescreens> {
   List<Example>? allproducts;
   bool isloded = false;
 
-   getdata() async {
-
-     setState(() {
-       isloded = true;
-     });
-     ApiHandler.getCall(URLResources.BASE_URL_EXAMPLE).then((json) {
-       setState(() {
-         allproducts =
-             json['data'].map<Example>((obj) => Example.fromJson(obj)).toList();
-         isloded = false;
-       });
-       return json;
-     });
-
+  getdata() async {
+    setState(() {
+      isloded = true;
+    });
+    ApiHandler.getCall(URLResources.BASE_URL_EXAMPLE).then((json) {
+      setState(() {
+        allproducts =
+            json['data'].map<Example>((obj) => Example.fromJson(obj)).toList();
+        isloded = false;
+      });
+      return json;
+    });
   }
 
   @override
@@ -38,72 +37,88 @@ class _ExamplescreensState extends State<Examplescreens> {
     super.initState();
     getdata();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text("Example Api"),
         ),
-        body:  (isloded)
+        body: (isloded)
             ? Center(
-          child: CircularProgressIndicator(),
-        )
+                child: CircularProgressIndicator(),
+              )
             : ListView.builder(
-          itemCount: allproducts!.length,
-          itemBuilder: (context, index) {
-            var dt = allproducts![index].date.toString();
-            //Logic
-            //string convert to date
-            DateTime dateTime = DateTime.parse(dt);
-            // date format
-            dt = DateFormat.MMMMEEEEd().format(dateTime);
-            //current date
-            DateTime currentdate = DateTime.now();
-            // diffrence between current date and enddate
-            final difference = dateTime.difference(currentdate).inDays;
+                itemCount: allproducts!.length,
+                itemBuilder: (context, index) {
+                  var dt = allproducts![index].date.toString();
+                  //Logic
+                  //string convert to date
+                  DateTime dateTime = DateTime.parse(dt);
+                  // date format
+                  dt = DateFormat.MMMMEEEEd().format(dateTime);
+                  //current date
+                  DateTime currentdate = DateTime.now();
+                  // diffrence between current date and enddate
+                  final difference = dateTime.difference(currentdate).inDays;
 
-            //  split 2 title
-            var title = allproducts![index].name.toString().split(",");
-            var s1 = title[0];
-            var s2="";
-            if(title.length>=2)
-              {
-               s2=title[1];
-              }
+                  //  split 2 title
+                  var title = allproducts![index].name.toString().split(",");
+                  var s1 = title[0];
+                  var s2 = "";
+                  if (title.length >= 2) {
+                    s2 = title[1];
+                  }
 
-            return Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Card(
-                child: Container(
-                  height: 100.0,
-                  color: Colors.brown.shade50,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(dt),
-                        SizedBox(width: 20.0,),
-                        Text(difference.toString()+" days"),
-                        ],
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Card(
+                      child: Container(
+                        height: 100.0,
+                        color: Colors.brown.shade50,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(dt),
+                                SizedBox(
+                                  width: 20.0,
+                                ),
+                                Text(difference.toString() + " days"),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  s1.toString(),
+                                  style: TextStyle(
+                                      color: allproducts![index]
+                                          .textColor
+                                          .toString()
+                                          .toColor()),
+                                ),
+                              ],
+                            ),
+                            (s2 != "")
+                                ? Row(
+                                    children: [
+                                      Text(s2.toString(),
+                                        style: TextStyle(
+                                            color: allproducts![index]
+                                                .textColor
+                                                .toString()
+                                                .toColor()),),
+                                    ],
+                                  )
+                                : SizedBox(),
+                            // Text(allproducts![index].date.toString()),
+                          ],
+                        ),
                       ),
-                      Row(
-                        children: [
-                          Text(s1.toString()),
-                        ],
-                      ),
-                      (s2!="")?Row(
-                        children: [
-                          Text(s2.toString()),
-                        ],
-                      ):SizedBox(),
-                      // Text(allproducts![index].date.toString()),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        ));
+                    ),
+                  );
+                },
+              ));
   }
 }
